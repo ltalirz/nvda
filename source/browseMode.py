@@ -1238,9 +1238,13 @@ class BrowseModeDocumentTreeInterceptor(documentBase.DocumentWithTableNavigation
 				return
 			if focusObj and not eventHandler.isPendingEvents("gainFocus") and focusObj!=self.rootNVDAObject and focusObj != api.getFocusObject() and self._shouldSetFocusToObj(focusObj):
 				focusObj.setFocus()
-			obj.scrollIntoView()
-			if self.programmaticScrollMayFireEvent:
-				self._lastProgrammaticScrollTime = time.time()
+			try:
+				obj.scrollIntoView()
+			except NotImplementedError:
+				pass
+			else:
+				if self.programmaticScrollMayFireEvent:
+					self._lastProgrammaticScrollTime = time.time()
 		self.passThrough=self.shouldPassThrough(focusObj,reason=reason)
 		# Queue the reporting of pass through mode so that it will be spoken after the actual content.
 		queueHandler.queueFunction(queueHandler.eventQueue, reportPassThrough, self)
